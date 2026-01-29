@@ -1,0 +1,14 @@
+# Entorn virtual
+.venv/
+env/
+
+# Python (compilats)
+__pycache__/
+*.pyc
+
+# Secrets i configuració local
+.env
+
+# IDEs
+.vscode/
+.idea/
