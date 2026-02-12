@@ -39,48 +39,36 @@
 #4from django.shortcuts import render, redirect
 #from django.contrib.auth.decorators import login_required
 #from django.contrib.auth.models import User
-#from .models import Incident
 #
 #@login_required
 #def perfil_usuari(request):
-#    # 1. Lógica para procesar cambios (POST)
+#    query = request.GET.get('q', '')
+#    # ORM usa .filter() que parametritza l'entrada automàticament
+#    incidents = Incident.objects.filter(titol=query)
+#    
+#    return render(request, 'perfil.html', {'incidents': incidents, 'query': query})
+#
+#@login_required
+#def perfil_usuari(request):
 #    if request.method == 'POST':
- #       nou_email = request.POST.get('email')
- #       # Actualizamos el email del usuario actual
+#        nou_email = request.POST.get('email')
+#        
+#        # .update() només actualitza els camps especificats
+#        # i escapa qualsevol caràcter maliciós com cometes o punts i coma.
 #        User.objects.filter(id=request.user.id).update(email=nou_email)
+#            
 #        return redirect('perfil')
 #
-#    # 2. Lógica para mostrar datos (GET)
-#    query = request.GET.get('q', '')
-#    # Asegúrate de haber importado el modelo Incident al principio del archivo
-#    incidents = Incident.objects.filter(titol__icontains=query) 
-#    
-#    # Este return ahora cubre cualquier petición que no sea POST
-#    return render(request, 'perfil.html', {'incidents': incidents, 'query': query})
-
-from django.shortcuts import render, get_object_or_404 #Importante añadir el error 404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.shortcuts import render
 from .models import Incident
 
-@login_required
-def perfil_usuari(request):
-    if request.method == 'POST':
-        nou_email = request.POST.get('email')
-        User.objects.filter(id=request.user.id).update(email=nou_email)
-        return redirect('perfil')
+def dashboard(request):
+    return render(request, 'dashboard.html')
 
-    query = request.GET.get('q', '')
-    incidents = Incident.objects.filter(titol__icontains=query) 
-    
-    return render(request, 'perfil.html', {'incidents': incidents, 'query': query})
-
-# --- APARTAT 8 ---
-@login_required
 def detall_incident(request, id):
-    # --- CORRECCIÓ APARTAT 8 ---
-    # Busquem l'incident per ID PERÒ obliguem a que el camp 'usuari' sigui el que fa la petició.
-    # Si l'ID existeix però pertany a un altre usuari, Django llançarà un 404 (Not Found).
-    incident = get_object_or_404(Incident, id=id, usuari=request.user)
-    
-    return render(request, 'detall_incident.html', {'incident': incident})
+    # Vulnerabilidad para la Evidència 7
+    incident = Incident.objects.get(id=id)
+    return render(request, 'perfil.html', {'incident': incident})
+
+
+

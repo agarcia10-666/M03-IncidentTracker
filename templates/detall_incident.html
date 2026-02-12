@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <title>Detall de l'Incident (Vulnerabilitat IDOR)</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; line-height: 1.6; }
+        .card { border: 2px solid #e74c3c; padding: 20px; border-radius: 8px; max-width: 600px; }
+        .vulnerability-alert { background: #fdeaea; border-left: 5px solid #e74c3c; padding: 10px; margin-bottom: 20px; color: #c0392b; }
+        .info { background: #f4f4f4; padding: 10px; border-radius: 4px; }
+        b { color: #2c3e50; }
+    </style>
+</head>
+<body>
+
+    <div class="vulnerability-alert">
+        <strong>ALERTA DE SEGURETAT (IDOR):</strong> 
+        Estàs visualitzant un objecte directament per la seva ID a la URL.
+    </div>
+
+    <h1>Detall de l'Incident #{{ incident.id }}</h1>
+
+    <div class="card">
+        <p><b>Títol:</b> {{ incident.titol | safe }}</p>
+        <p><b>Descripció:</b> {{ incident.descripcio }}</p>
+        
+        <hr>
+        
+        <div class="info">
+            <!-- Això és el més important per a l'evidència 7 -->
+            <p><b>Propietari real (Creador):</b> {{ incident.usuari.username }}</p>
+            <p><b>Usuari actualment loguejat:</b> <span style="color:red">{{ request.user.username }}</span></p>
+        </div>
+    </div>
+
+    <p><a href="{% url 'perfil' %}"> Tornar al meu perfil</a></p>
+
+</body>
+</html>

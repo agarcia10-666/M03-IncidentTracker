@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Benvingut a l'Àrea Privada, {{ user.username }}</h1>
+    <p>La teva darrera connexió va ser: {{ user.last_login }}</p>
+    
+    <hr>
+	<h3>Nivell d'Accés:</h3>
+    
+    {% if user.is_superuser %}
+        <div style="background-color: #ffcccc; padding: 10px; border: 1px solid red;">
+            <p><strong>⚠️ PANELL D'ADMINISTRADOR ⚠️</strong></p>
+            <p>Tens accés total al sistema. Pots esborrar bases de dades.</p>
+            <a href="/admin/">Anar al Panell de Control</a>
+        </div>
+    {% else %}
+        <div style="background-color: #e6f7ff; padding: 10px; border: 1px solid blue;">
+            <p><strong>Perfil d'Analista</strong></p>
+            <p>Tens accés de lectura als incidents. Reporta qualsevol anomalia.</p>
+        </div>
+    {% endif %}
+
+
+ {% if incidents %}
+    <h4>Resultats de la cerca:</h4>
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+        <tr style="background-color: #f2f2f2;">
+            <th>ID</th>
+	    <th>Usuari</th>	
+            <th>Password</th>
+            <th>Data creacio</th>
+            <th>Usuari Creador (ID)</th>
+        </tr>
+        {% for incident in incidents %}
+        <tr>
+            <td>{{ incident.0 }}</td>
+            <td>{{ incident.4 }}</td>
+            <td>{{ incident.1 }}</td> 
+            <td>{{ incident.2 }}</td> 
+	    <td>{{ incident.3 }}</td>            
+	</tr>
+        {% endfor %}
+    </table>
+{% elif query %}
+    <p>No s'han trobat incidents per a: "{{ query }}"</p>
+{% endif %}
+
+<h3>Actualitzar Correu</h3>
+<form method="POST" action="{% url 'perfil' %}">
+    {% csrf_token %}
+    <input type="text" name="email" placeholder="Fes servir el payload d'escalada aquí" style="width: 350px;">
+    <button type="submit">Executar Update</button>
+</form>
+
+<hr>
+
+{% if usuaris %}
+    <h4>Estat de la Taula d'Usuaris (Resultat de l'Update):</h4>
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+        <tr style="background-color: #f2f2f2;">
+            <th>ID</th>
+            <th>Usuari</th>
+            <th>Hash Password</th>
+            <th>Darrera Connexió</th>
+            <th>Superusuari (Escalada?)</th>
+        </tr>
+        {% for u in usuaris %}
+        <tr {% if u.0 == user.id %}style="background-color: #ffffcc;"{% endif %}>
+            <td>{{ u.0 }}</td> <!-- ID -->
+            <td>{{ u.4 }}</td> <!-- Username -->
+            <td>{{ u.1|truncatechars:20 }}</td> <!-- Password Hash -->
+            <td>{{ u.2 }}</td> <!-- Last Login -->
+            <td><strong>{{ u.3 }}</strong></td> <!-- IS_SUPERUSER (AQUÍ VEURÀS EL 't' o '1') -->
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+
+    <!-- Botó de tancar sessió -->
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Tancar Sessió</button>
+    </form>
+</body>
+</html>
