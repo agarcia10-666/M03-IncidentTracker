@@ -50,8 +50,14 @@ jobs:
           pip install -r requirements.txt
           pip install psycopg2-binary selenium
 
+
       - name: Executar Tests de Seguretat
         env:
+          DB_NAME: incident_db
+          DB_USER: root
+          DB_PASS: 12345678
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
           SECRET_KEY: ${{ secrets.MY_DJANGO_SECRET }}
           MOZ_HEADLESS: 1
         run: python manage.py test core.tests_selenium
