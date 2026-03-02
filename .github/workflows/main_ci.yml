@@ -22,11 +22,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y firefox
-          # URL COMPLETA I DIRECTA AL FITXER:
-          wget https://github.com
-          tar -xvzf geckodriver-v0.33.0-linux64.tar.gz
-          sudo mv geckodriver /usr/local/bin/
-          chmod +x /usr/local/bin/geckodriver
 
       - name: Instal·lar dependències
         run: |
