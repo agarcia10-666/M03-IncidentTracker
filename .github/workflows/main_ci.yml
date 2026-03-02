@@ -1,31 +1,21 @@
-name: CI DevSecOps Pipeline
-
-on: [push]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout codi
-        uses: actions/checkout@v3
-
-      - name: Configurar Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
       - name: Instal·lar Firefox i Geckodriver
         run: |
           sudo apt-get update
-          sudo apt-get install firefox -y
+          sudo apt-get install -y firefox
+          # DESCARREGA I INSTAL·LA GECKODRIVER (Crucial per evitar el bloqueig)
+          wget https://github.com
+          tar -xvzf geckodriver-v0.33.0-linux64.tar.gz
+          sudo mv geckodriver /usr/local/bin/
 
       - name: Instal·lar dependències
         run: |
           pip install -r requirements.txt
-          pip install psycopg2-binary selenium  # Drivers necessaris
+          pip install psycopg2-binary selenium
 
       - name: Executar Tests de Seguretat
         env:
           SECRET_KEY: ${{ secrets.MY_DJANGO_SECRET }}
-          MOZ_HEADLESS: 1
-        run: python manage.py test core.tests_selenium
+          MOZ_HEADLESS: "1"  # Força mode sense finestra
+        run: |
+          # Si no tens Postgres a GitHub, assegura't que Django usi SQLite per als tests
+          python manage.py test core.tests_selenium --noinput
