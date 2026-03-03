@@ -34,6 +34,9 @@ jobs:
           pip install -r requirements.txt
           pip install selenium  # Ja no cal psycopg2-binary per als tests
 
+      - name: Setup Firefox
+        uses: browser-actions/setup-firefox@v1
+
       - name: Executar Tests de Seguretat (Policia)
         env:
           SECRET_KEY: ${{ secrets.MY_DJANGO_SECRET }}
